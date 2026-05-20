@@ -1,36 +1,36 @@
 # AI Voice Studio
 
-Portfolio-ready text-to-speech demo with realistic German AI voices, demo protection, and Cloudflare Turnstile.
+Modern AI text-to-speech platform using ElevenLabs and Cloudflare Turnstile.
 
-Turn written text into studio-quality German speech with Bavarian and Hochdeutsch voice options, instant MP3 playback, and download.
+Experimental demo SaaS MVP for real-time German speech generation: Bavarian and Hochdeutsch voices, in-browser playback, and MP3 download. Built as a secure, rate-limited AI voice testing playground with production-style deployment patterns.
 
 ## Features
 
-- Premium studio-style UI (Next.js + Tailwind)
-- German voice selection (Bavarian male/female, Hochdeutsch male)
-- ElevenLabs text-to-speech with server-side API key
+- Studio UI (Next.js 16 + Tailwind CSS 4)
+- German voice presets (Bavarian male/female, Hochdeutsch male)
+- ElevenLabs TTS with server-side API key handling
 - MP3 playback and download
 - Response caching (`X-Cache: HIT` / `MISS`)
-- Demo password gate + Cloudflare Turnstile on unlock
-- Live ElevenLabs credit display
+- Access gate: shared password + Turnstile verification on unlock
+- Live ElevenLabs credit balance in the UI
 - Per-IP rate limiting on generation (10 requests / hour)
-- Character limit for public demo safety
+- Character cap for safe public demo usage
 
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
 - **UI:** React 19, Tailwind CSS 4
 - **TTS:** ElevenLabs API
-- **Security:** Cloudflare Turnstile, demo password header, in-memory rate limit
+- **Security:** Cloudflare Turnstile, session password header, in-memory rate limit
 - **Language:** TypeScript
 
 ## Screenshots
 
 | Screen | Description |
 |--------|-------------|
-| ![Password gate](./docs/screenshots/password-gate.png) | Demo unlock with password + Turnstile |
-| ![Voice studio](./docs/screenshots/voice-studio.png) | Text input, voice cards, generate flow |
-| ![Audio player](./docs/screenshots/audio-player.png) | Custom player + MP3 download |
+| ![Access gate](./docs/screenshots/password-gate.png) | Secure unlock: password + Cloudflare Turnstile |
+| ![Voice workspace](./docs/screenshots/voice-studio.png) | Text input, voice selection, and generation controls |
+| ![Playback](./docs/screenshots/audio-player.png) | Generated speech player and MP3 export |
 
 Regenerate locally: `npm run build`, `npm run start` (port 3001), then `SCREENSHOT_BASE_URL=http://127.0.0.1:3001 SCREENSHOT_HEADED=1 npm run screenshots`.
 
@@ -74,7 +74,7 @@ Restart the dev server after changing env values.
 
 - Never commit `.env.local` or real API keys.
 - `ELEVENLABS_API_KEY` and `TURNSTILE_SECRET_KEY` stay server-side only.
-- Turnstile is verified once at demo unlock (`/api/verify-demo`).
+- Turnstile is verified once at unlock (`/api/verify-demo`).
 - Voice generation requires `x-demo-password` header.
 - `/api/generate-voice` applies in-memory rate limiting: **10 requests per IP per hour**.
 - Rate limits reset on serverless cold starts (MVP tradeoff).
@@ -168,7 +168,7 @@ After deploy, in Cloudflare Turnstile → **Hostname management**, add:
 
 ## License
 
-Private portfolio project. All rights reserved unless otherwise noted.
+Private project. All rights reserved unless otherwise noted.
 
 ## Author
 
