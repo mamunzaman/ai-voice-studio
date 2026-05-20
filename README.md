@@ -32,7 +32,7 @@ Turn written text into studio-quality German speech with Bavarian and Hochdeutsc
 | ![Voice studio](./docs/screenshots/voice-studio.png) | Text input, voice cards, generate flow |
 | ![Audio player](./docs/screenshots/audio-player.png) | Custom player + MP3 download |
 
-> Add screenshots to `docs/screenshots/` when ready for portfolio publish.
+Regenerate locally: `npm run build`, `npm run start` (port 3001), then `SCREENSHOT_BASE_URL=http://127.0.0.1:3001 SCREENSHOT_HEADED=1 npm run screenshots`.
 
 ## Local Setup
 
