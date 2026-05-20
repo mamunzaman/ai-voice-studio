@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+.cache/
+.env.local
+
 # dependencies
 /node_modules
 /.pnp
@@ -19,6 +22,9 @@
 
 # production
 /build
+
+# cache
+.cache/
 
 # misc
 .DS_Store
