@@ -1,49 +1,97 @@
+import AppNavbar from "@/components/AppNavbar";
 import PasswordGate from "@/components/PasswordGate";
+import PremiumBackground from "@/components/PremiumBackground";
 import VoiceGeneratorCard from "@/components/VoiceGeneratorCard";
 
-const HERO_PILLS = ["MP3 Export", "Live Credits", "Instant Generation"];
+const FEATURES = [
+  {
+    title: "High Quality",
+    description: "Studio-grade German voices powered by ElevenLabs.",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 19V6l12-3v13M6 19h.01M18 19h.01"
+      />
+    ),
+  },
+  {
+    title: "Secure & Private",
+    description: "Password gate, Turnstile verification, and server-side keys.",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 11c1.657 0 3-1.343 3-3V6a3 3 0 1 0-6 0v2c0 1.657 1.343 3 3 3Zm0 0v5m0 3h.01"
+      />
+    ),
+  },
+  {
+    title: "Lightning Fast",
+    description: "Generate speech in seconds with instant MP3 playback.",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M13 10V3L4 14h7v7l9-11h-7Z"
+      />
+    ),
+  },
+];
 
 export default function Home() {
   return (
     <PasswordGate>
-      <main className="relative min-h-screen w-full bg-[#050508] text-white">
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-vignette" />
-          <div className="absolute inset-0 bg-noise" />
-          <div className="absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(34,211,238,0.09)_0%,transparent_68%)]" />
-          <div className="absolute -bottom-32 -right-24 hidden h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.06)_0%,transparent_70%)] blur-3xl md:block" />
-        </div>
+      <main className="relative min-h-screen w-full text-white">
+        <PremiumBackground />
 
-        <div className="relative z-10 mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-          <header className="mx-auto max-w-3xl text-center">
-            <p className="animate-fade-in-up text-[11px] font-medium tracking-[0.14em] text-white/45 uppercase">
-              Realistic German AI Voice
-            </p>
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+          <AppNavbar />
 
-            <h1 className="animate-fade-in-up-delayed mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.25rem] lg:leading-[1.05]">
-              Turn text into
+          <section className="mx-auto mt-10 max-w-4xl text-center sm:mt-12">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              <span className="text-gradient-hero">
+                Create Realistic AI Voices
+              </span>
               <br />
-              <span className="text-white/90">human speech.</span>
+              <span className="text-white">in Seconds</span>
             </h1>
-
-            <p className="animate-fade-in-up-delayed-2 mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/55 sm:text-lg">
-              Studio-quality German AI voices with Bavarian warmth and Hochdeutsch
-              clarity.
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
+              Transform your text into studio-quality German speech with Bavarian
+              warmth and Hochdeutsch clarity. Built for portfolio demos and
+              professional presentations.
             </p>
-
-            <ul className="animate-fade-in-up-delayed-2 mt-8 flex flex-wrap items-center justify-center gap-2 px-1">
-              {HERO_PILLS.map((pill) => (
-                <li
-                  key={pill}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-medium text-white/70 backdrop-blur-md transition hover:border-white/15 hover:bg-white/[0.07]"
-                >
-                  {pill}
-                </li>
-              ))}
-            </ul>
-          </header>
+          </section>
 
           <VoiceGeneratorCard />
+
+          <section className="mt-10 grid gap-4 sm:grid-cols-3">
+            {FEATURES.map((feature) => (
+              <div
+                key={feature.title}
+                className="glass-panel rounded-2xl p-5 transition hover:border-white/15"
+              >
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 text-blue-300">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    className="h-5 w-5"
+                    aria-hidden
+                  >
+                    {feature.icon}
+                  </svg>
+                </div>
+                <h3 className="text-sm font-semibold text-white">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/45">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </section>
         </div>
       </main>
     </PasswordGate>

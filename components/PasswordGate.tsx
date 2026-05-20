@@ -7,6 +7,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import AppNavbar from "@/components/AppNavbar";
+import PremiumBackground from "@/components/PremiumBackground";
 import TurnstileWidget from "@/components/TurnstileWidget";
 
 type DemoAuthContextValue = {
@@ -102,30 +104,25 @@ export default function PasswordGate({ children }: PasswordGateProps) {
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-[#050508] text-white">
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-vignette" />
-        <div className="absolute inset-0 bg-noise" />
-        <div className="absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(34,211,238,0.09)_0%,transparent_68%)]" />
-      </div>
+    <div className="relative min-h-screen w-full text-white">
+      <PremiumBackground />
 
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-4 py-16">
-        <div className="w-full max-w-md overflow-visible rounded-[28px] bg-gradient-to-b from-white/[0.1] to-white/[0.02] p-px shadow-[0_24px_80px_-28px_rgba(0,0,0,0.9)]">
-          <div className="rounded-[27px] bg-[#0a0a0c]/92 p-6 sm:p-8">
-            <p className="text-[11px] font-medium tracking-[0.14em] text-white/45 uppercase">
-              Portfolio demo
-            </p>
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-6 sm:px-6 sm:py-8">
+        <AppNavbar />
 
-            <h1 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-              AI Voice Studio
+        <div className="flex flex-1 flex-col items-center justify-center py-10">
+          <div className="w-full max-w-md text-center">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              <span className="text-gradient-hero">Unlock the Studio</span>
             </h1>
-
-            <p className="mt-2 text-sm leading-relaxed text-white/45">
-              Enter the demo password and complete verification to access this
-              portfolio project.
+            <p className="mt-3 text-sm leading-relaxed text-white/50 sm:text-base">
+              Enter the demo password and complete Cloudflare verification to
+              access AI Voice Studio.
             </p>
+          </div>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div className="glass-panel mt-8 w-full max-w-md rounded-3xl p-6 sm:p-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
                   htmlFor="demo-password"
@@ -133,14 +130,13 @@ export default function PasswordGate({ children }: PasswordGateProps) {
                 >
                   Demo password
                 </label>
-
                 <input
                   id="demo-password"
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   autoComplete="off"
-                  className="w-full rounded-2xl border border-white/[0.08] bg-black/50 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-cyan-400/35 focus:ring-1 focus:ring-cyan-400/20"
+                  className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-blue-400/40 focus:ring-1 focus:ring-blue-400/25"
                   placeholder="Enter password"
                 />
               </div>
@@ -153,7 +149,7 @@ export default function PasswordGate({ children }: PasswordGateProps) {
               </div>
 
               {error && (
-                <p className="rounded-xl border border-red-500/15 border-l-2 border-l-red-400/90 bg-red-500/[0.06] px-3 py-2 text-sm text-red-200/90">
+                <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-200/90">
                   {error}
                 </p>
               )}
@@ -161,7 +157,7 @@ export default function PasswordGate({ children }: PasswordGateProps) {
               <button
                 type="submit"
                 disabled={!canUnlock || isSubmitting}
-                className="w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-cyan-300 px-6 py-3.5 text-sm font-semibold tracking-tight text-black shadow-[0_0_32px_-10px_rgba(34,211,238,0.5)] transition hover:from-cyan-300 hover:to-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/60 disabled:cursor-not-allowed disabled:opacity-45 disabled:shadow-none"
+                className="btn-gradient w-full rounded-2xl px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_40px_rgba(59,130,246,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 disabled:cursor-not-allowed disabled:opacity-45"
               >
                 {isSubmitting ? "Verifying..." : "Unlock demo"}
               </button>

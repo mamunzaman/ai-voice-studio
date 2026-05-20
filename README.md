@@ -80,27 +80,74 @@ Restart the dev server after changing env values.
 - Rate limits reset on serverless cold starts (MVP tradeoff).
 - Protect or remove `/api/usage` before full public launch if needed.
 
-## Deployment
+## Deployment (Vercel)
 
-### Vercel (recommended)
+Detailed guide: [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md)
 
-1. Import `mamunzaman/ai-voice-studio` in Vercel.
-2. Add all environment variables from `.env.example`.
-3. In Cloudflare Turnstile, allow your production hostname (and preview URLs if needed).
-4. Deploy.
+### Exact Vercel steps
 
-```bash
-npm run build
-npm run start
-```
+1. Sign in at [vercel.com](https://vercel.com) with GitHub.
+2. **Add New Project** → Import `mamunzaman/ai-voice-studio`.
+3. Confirm settings:
+   - **Framework:** Next.js
+   - **Root Directory:** `.`
+   - **Build Command:** `npm run build`
+   - **Install Command:** `npm install`
+4. **Environment Variables** → add every variable from the checklist below (Production + Preview).
+5. **Deploy** → wait for build success.
+6. Open `https://<your-project>.vercel.app` and run the post-deploy checklist.
+
+### Production environment variable checklist
+
+Copy from `.env.example`. In Vercel, add each name/value (no quotes):
+
+| Variable | Vercel scope | Secret? |
+|----------|--------------|---------|
+| `ELEVENLABS_API_KEY` | Production, Preview | Yes |
+| `ELEVENLABS_VOICE_MALE_BAVARIAN_ID` | Production, Preview | Yes |
+| `ELEVENLABS_VOICE_FEMALE_BAVARIAN_ID` | Production, Preview | Yes |
+| `ELEVENLABS_VOICE_MALE_HOCHDEUTSCH_ID` | Production, Preview | Yes |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Production, Preview | No (public) |
+| `TURNSTILE_SECRET_KEY` | Production, Preview | Yes |
+| `NEXT_PUBLIC_DEMO_PASSWORD` | Production, Preview | No (client-visible) |
+| `DEMO_PASSWORD` | Production, Preview | Yes |
+| `NEXT_PUBLIC_MAX_TEXT_LENGTH` | Production, Preview | No |
+| `MAX_TEXT_LENGTH` | Production, Preview | No |
+
+`NEXT_PUBLIC_*` values are embedded in the client bundle — use a demo-only password, not a production secret.
+
+### Cloudflare Turnstile (production domains)
+
+After deploy, in Cloudflare Turnstile → **Hostname management**, add:
+
+- `localhost` (local dev)
+- `<project>.vercel.app` (your live Vercel URL)
+- `*.vercel.app` (optional, for preview deployments)
+- Your custom domain when added (e.g. `voice.yourdomain.com`)
+
+### Custom domain (later)
+
+1. Vercel → Project → **Settings** → **Domains** → Add.
+2. Point DNS per Vercel instructions.
+3. Add the same hostname to Cloudflare Turnstile allowlist.
+4. No code changes required.
+
+### What can break in production
+
+- **Turnstile:** hostname not listed in Cloudflare → CAPTCHA fails at unlock.
+- **Password mismatch:** `DEMO_PASSWORD` must equal `NEXT_PUBLIC_DEMO_PASSWORD`.
+- **ElevenLabs:** wrong voice IDs or quota → `502` / `ELEVENLABS_ERROR`.
+- **Serverless cache:** `.cache/audio` is ephemeral — expect mostly `X-Cache: MISS` on Vercel.
+- **Rate limit:** in-memory limit resets per serverless instance (MVP).
+- **Function timeout:** long text may hit Vercel Hobby 10s limit; Pro allows longer (`maxDuration` set to 60s).
 
 ### Post-deploy checklist
 
-- [ ] Unlock flow: password + Turnstile
-- [ ] Generate speech returns MP3
-- [ ] Wrong password shows error and resets Turnstile
-- [ ] Rate limit returns `429` after 10 generations/hour/IP
-- [ ] No secrets in browser network tab except public Turnstile site key
+- [ ] Unlock: password + Turnstile on production URL
+- [ ] Generate speech → MP3 plays and downloads
+- [ ] Wrong password → error + Turnstile reset
+- [ ] Rate limit → `429` after 10 requests/hour/IP
+- [ ] No API keys in browser (only public Turnstile site key + demo password in client)
 
 ## API Overview
 

@@ -7,6 +7,9 @@ import type { VoiceOption } from "@/types/voice";
 
 type VoiceId = VoiceOption["id"];
 
+// ElevenLabs TTS can take several seconds; allow longer on Vercel Pro (Hobby max is 10s).
+export const maxDuration = 60;
+
 const VALID_VOICES: VoiceId[] = [
   "male_bavarian",
   "female_bavarian",
