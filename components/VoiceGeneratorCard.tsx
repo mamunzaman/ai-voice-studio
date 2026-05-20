@@ -5,6 +5,21 @@ import AudioPlayerCard from "@/components/AudioPlayerCard";
 import { useDemoPassword } from "@/components/PasswordGate";
 import { MAX_CHARACTERS, VOICE_OPTIONS } from "@/lib/constants";
 
+function SectionHeading({
+  step,
+  title,
+}: {
+  step: string;
+  title: string;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="step-badge">{step}</span>
+      <h2 className="text-sm font-semibold tracking-tight text-white">{title}</h2>
+    </div>
+  );
+}
+
 export default function VoiceGeneratorCard() {
   const demoPassword = useDemoPassword();
   const [text, setText] = useState("");
@@ -87,56 +102,53 @@ export default function VoiceGeneratorCard() {
   const canGenerate = !isOverLimit;
 
   return (
-    <section className="mx-auto mt-10 w-full max-w-6xl lg:mt-12">
-      <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-        <div className="glass-panel rounded-3xl p-5 sm:p-6">
-          <h2 className="text-base font-semibold text-white">
-            1. Input Your Text
-          </h2>
+    <section className="mt-6 w-full sm:mt-7">
+      <div className="grid gap-4 lg:grid-cols-2 lg:gap-5 lg:items-stretch">
+        <div className="card-shell flex flex-col rounded-2xl p-4 sm:p-5">
+          <SectionHeading step="1" title="Input Your Text" />
 
           <textarea
             value={text}
             onChange={(event) => setText(event.target.value)}
-            className="mt-4 min-h-36 w-full resize-none rounded-2xl border border-white/10 bg-black/40 p-4 text-sm leading-relaxed text-white outline-none transition placeholder:text-white/30 focus:border-blue-400/40 focus:ring-1 focus:ring-blue-400/25 sm:min-h-40"
-            placeholder="Enter the text you want to convert into realistic AI speech..."
+            className="input-field mt-3 min-h-[7.5rem] w-full resize-none rounded-xl p-3.5 text-sm leading-relaxed text-white placeholder:text-white/28 sm:min-h-32"
+            placeholder="Enter text to convert into realistic AI speech..."
           />
 
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-white/40">
-            <span>Maximum {MAX_CHARACTERS} characters</span>
+          <div className="mt-2 flex items-center justify-between text-[11px] text-white/38">
+            <span>Max {MAX_CHARACTERS} characters</span>
             <span
-              className={`font-mono ${isOverLimit ? "text-amber-300" : "text-white/55"}`}
+              className={`font-mono tabular-nums ${isOverLimit ? "text-amber-300" : ""}`}
             >
-              {text.length} / {MAX_CHARACTERS}
+              {text.length}/{MAX_CHARACTERS}
             </span>
           </div>
 
           {isOverLimit && (
-            <p className="mt-3 rounded-xl border border-amber-400/20 bg-amber-400/10 px-3 py-2 text-sm text-amber-100/90">
+            <p className="mt-2 rounded-lg border border-amber-400/20 bg-amber-400/10 px-2.5 py-1.5 text-xs text-amber-100/90">
               Demo limit: {MAX_CHARACTERS} characters per generation.
             </p>
           )}
 
-          <div className="mt-3 rounded-xl border border-white/5 bg-white/[0.03] px-3 py-2.5 text-xs text-white/45">
-            <p>
-              Estimated usage:{" "}
-              <span className="font-mono text-blue-200/80">{text.length}</span>{" "}
-              credits
+          {(remainingCredits !== null || text.length > 0) && (
+            <p className="mt-2 text-[11px] text-white/40">
+              Est. {text.length} credits
+              {remainingCredits !== null && creditLimit !== null && (
+                <>
+                  {" "}
+                  · Balance{" "}
+                  <span className="font-mono text-white/55">
+                    {remainingCredits}/{creditLimit}
+                  </span>
+                </>
+              )}
             </p>
-            {remainingCredits !== null && creditLimit !== null && (
-              <p className="mt-1">
-                Live balance:{" "}
-                <span className="font-mono text-white/60">
-                  {remainingCredits} / {creditLimit}
-                </span>
-              </p>
-            )}
+          )}
+
+          <div className="mt-5">
+            <SectionHeading step="2" title="Choose a Voice" />
           </div>
 
-          <h2 className="mt-8 text-base font-semibold text-white">
-            2. Choose a Voice
-          </h2>
-
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          <div className="mt-2.5 space-y-2">
             {VOICE_OPTIONS.map((voiceOption) => {
               const isSelected = voice === voiceOption.id;
 
@@ -145,37 +157,33 @@ export default function VoiceGeneratorCard() {
                   key={voiceOption.id}
                   type="button"
                   onClick={() => setVoice(voiceOption.id)}
-                  className={`rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40 ${
+                  className={`flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40 ${
                     isSelected
-                      ? "border-blue-400/50 bg-blue-500/10 ring-1 ring-blue-400/30"
-                      : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05]"
+                      ? "border-blue-400/45 bg-blue-500/10 ring-1 ring-blue-400/25"
+                      : "border-white/[0.08] bg-black/20 hover:border-white/15 hover:bg-white/[0.03]"
                   }`}
                 >
-                  <div className="mb-3 flex items-center justify-between gap-2">
-                    <span className="text-xl">🇩🇪</span>
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                        isSelected
-                          ? "bg-blue-400/20 text-blue-200"
-                          : "bg-white/5 text-white/40"
-                      }`}
-                    >
-                      {isSelected ? "Selected" : "Voice"}
-                    </span>
+                  <span className="text-lg leading-none">🇩🇪</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-white">
+                      {voiceOption.label}
+                    </p>
+                    <p className="text-[11px] text-white/42">
+                      {voiceOption.accent}
+                    </p>
                   </div>
-                  <p className="text-sm font-semibold text-white">
-                    {voiceOption.label}
-                  </p>
-                  <p className="mt-1 text-xs text-white/45">
-                    {voiceOption.accent}
-                  </p>
+                  {isSelected && (
+                    <span className="shrink-0 rounded-md bg-blue-400/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-200">
+                      Active
+                    </span>
+                  )}
                 </button>
               );
             })}
           </div>
 
           {error && (
-            <p className="mt-5 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200/90">
+            <p className="mt-4 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-200/90">
               {error}
             </p>
           )}
@@ -184,39 +192,32 @@ export default function VoiceGeneratorCard() {
             type="button"
             onClick={handleGenerate}
             disabled={isLoading || !canGenerate}
-            className="btn-gradient mt-6 w-full rounded-2xl px-6 py-4 text-sm font-semibold text-white shadow-[0_12px_40px_rgba(59,130,246,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 disabled:cursor-not-allowed disabled:opacity-45"
+            className="btn-gradient mt-4 w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/45 disabled:cursor-not-allowed disabled:opacity-45"
           >
-            {isLoading ? "Generating voice..." : "Generate Voice"}
+            {isLoading ? "Generating..." : "Generate Voice"}
           </button>
         </div>
 
-        <div className="glass-panel flex min-h-[420px] flex-col rounded-3xl p-5 sm:min-h-[480px] sm:p-6">
-          <h2 className="text-base font-semibold text-white">
-            3. Generated Speech
-          </h2>
+        <div className="card-shell flex flex-col rounded-2xl p-4 sm:p-5">
+          <SectionHeading step="3" title="Generated Speech" />
 
-          <div className="mt-4 flex flex-1 flex-col">
+          <div className="mt-3 flex flex-1 flex-col justify-center">
             {isLoading && (
-              <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/20 px-6 py-12 text-center">
-                <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-blue-400" />
-                <p className="mt-4 text-sm font-medium text-white/70">
-                  Synthesizing your speech...
-                </p>
-                <p className="mt-1 text-xs text-white/40">
-                  This may take a few seconds
-                </p>
+              <div className="flex flex-col items-center rounded-xl border border-dashed border-white/10 bg-black/25 px-4 py-10 text-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/15 border-t-blue-400" />
+                <p className="mt-3 text-sm text-white/65">Synthesizing...</p>
               </div>
             )}
 
-            {!isLoading && !audioUrl && !error && (
-              <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/20 px-6 py-12 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/20 to-violet-500/20 text-blue-300">
+            {!isLoading && !audioUrl && (
+              <div className="flex flex-col items-center rounded-xl border border-dashed border-white/10 bg-black/25 px-4 py-10 text-center">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="1.6"
-                    className="h-7 w-7"
+                    className="h-5 w-5"
                     aria-hidden
                   >
                     <path
@@ -226,31 +227,20 @@ export default function VoiceGeneratorCard() {
                     />
                   </svg>
                 </div>
-                <p className="mt-4 text-sm font-medium text-white/70">
-                  Your generated audio will appear here
-                </p>
-                <p className="mt-1 max-w-xs text-xs text-white/40">
-                  Enter text, choose a voice, and click Generate Voice
-                </p>
-              </div>
-            )}
-
-            {!isLoading && error && !audioUrl && (
-              <div className="flex flex-1 flex-col items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/5 px-6 py-12 text-center">
-                <p className="text-sm font-medium text-red-200/90">{error}</p>
-                <p className="mt-2 text-xs text-white/40">
-                  Fix the issue on the left and try again
+                <p className="mt-3 text-sm text-white/60">Audio preview</p>
+                <p className="mt-1 text-[11px] text-white/38">
+                  Generate voice to play and download MP3
                 </p>
               </div>
             )}
 
             {!isLoading && audioUrl && (
-              <div className="flex flex-1 flex-col gap-4">
+              <div className="space-y-3">
                 <AudioPlayerCard audioUrl={audioUrl} />
                 <a
                   href={audioUrl}
                   download="ai-voice-studio.mp3"
-                  className="btn-gradient flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-3.5 text-sm font-semibold text-white transition hover:brightness-110"
+                  className="btn-gradient flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -269,10 +259,10 @@ export default function VoiceGeneratorCard() {
                   Download MP3
                 </a>
                 {cacheStatus && (
-                  <p className="text-center text-xs text-white/40">
+                  <p className="text-center text-[11px] text-white/38">
                     {cacheStatus === "HIT"
-                      ? "Loaded from cache — no new credits used."
-                      : "Fresh generation — credits used."}
+                      ? "From cache — no credits used"
+                      : "New generation — credits used"}
                   </p>
                 )}
               </div>

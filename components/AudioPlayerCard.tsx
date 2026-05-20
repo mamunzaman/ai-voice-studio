@@ -91,7 +91,7 @@ export default function AudioPlayerCard({ audioUrl }: AudioPlayerCardProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+    <div className="rounded-xl border border-white/[0.08] bg-black/30 p-3.5">
       <audio
         ref={audioRef}
         src={audioUrl}
@@ -101,18 +101,18 @@ export default function AudioPlayerCard({ audioUrl }: AudioPlayerCardProps) {
         onEnded={handleEnded}
       />
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={togglePlay}
           aria-label={isPlaying ? "Pause" : "Play"}
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-white shadow-[0_0_24px_rgba(99,102,241,0.45)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-white shadow-[0_0_16px_rgba(99,102,241,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/45"
         >
           {isPlaying ? (
             <svg
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="h-5 w-5"
+              className="h-4 w-4"
               aria-hidden
             >
               <rect x="6" y="5" width="4" height="14" rx="1" />
@@ -122,7 +122,7 @@ export default function AudioPlayerCard({ audioUrl }: AudioPlayerCardProps) {
             <svg
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="h-5 w-5 translate-x-0.5"
+              className="h-4 w-4 translate-x-px"
               aria-hidden
             >
               <path d="M8 5.14v13.72L19 12 8 5.14z" />
@@ -139,15 +139,14 @@ export default function AudioPlayerCard({ audioUrl }: AudioPlayerCardProps) {
             aria-valuenow={currentTime}
             tabIndex={0}
             onClick={handleSeek}
-            className="group h-2 cursor-pointer overflow-hidden rounded-full bg-white/10"
+            className="h-1.5 cursor-pointer overflow-hidden rounded-full bg-white/10"
           >
             <div
               className="h-full rounded-full bg-gradient-to-r from-blue-400 to-violet-500 transition-[width] duration-150"
               style={{ width: `${progress}%` }}
             />
           </div>
-
-          <div className="mt-2 flex items-center justify-between font-mono text-[11px] tabular-nums text-white/45">
+          <div className="mt-1.5 flex justify-between font-mono text-[10px] tabular-nums text-white/40">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>

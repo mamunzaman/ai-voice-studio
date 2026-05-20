@@ -104,29 +104,28 @@ export default function PasswordGate({ children }: PasswordGateProps) {
   }
 
   return (
-    <div className="relative min-h-screen w-full text-white">
+    <div className="relative flex min-h-screen w-full flex-col text-white">
       <PremiumBackground />
 
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-6 sm:px-6 sm:py-8">
-        <AppNavbar />
+      <div className="relative z-10 mx-auto flex w-full max-w-md flex-1 flex-col px-4 py-5 sm:px-6">
+        <AppNavbar compact />
 
-        <div className="flex flex-1 flex-col items-center justify-center py-10">
-          <div className="w-full max-w-md text-center">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              <span className="text-gradient-hero">Unlock the Studio</span>
+        <div className="flex flex-1 flex-col justify-center py-6 sm:py-8">
+          <div className="mb-5 text-center">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-[1.65rem]">
+              <span className="text-gradient-hero">Unlock Demo</span>
             </h1>
-            <p className="mt-3 text-sm leading-relaxed text-white/50 sm:text-base">
-              Enter the demo password and complete Cloudflare verification to
-              access AI Voice Studio.
+            <p className="mt-2 text-sm text-white/45">
+              Password and verification required
             </p>
           </div>
 
-          <div className="glass-panel mt-8 w-full max-w-md rounded-3xl p-6 sm:p-8">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="card-shell rounded-2xl p-5 sm:p-6">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               <div>
                 <label
                   htmlFor="demo-password"
-                  className="mb-2 block text-sm font-medium text-white/80"
+                  className="mb-1.5 block text-xs font-medium text-white/70"
                 >
                   Demo password
                 </label>
@@ -136,12 +135,12 @@ export default function PasswordGate({ children }: PasswordGateProps) {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   autoComplete="off"
-                  className="w-full rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-blue-400/40 focus:ring-1 focus:ring-blue-400/25"
+                  className="input-field w-full rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/30"
                   placeholder="Enter password"
                 />
               </div>
 
-              <div className="relative z-20 flex w-full justify-center overflow-visible py-1">
+              <div className="relative z-20 flex justify-center overflow-visible py-0.5">
                 <TurnstileWidget
                   key={turnstileKey}
                   onTokenChange={handleTurnstileToken}
@@ -149,7 +148,7 @@ export default function PasswordGate({ children }: PasswordGateProps) {
               </div>
 
               {error && (
-                <p className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-200/90">
+                <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-200/90">
                   {error}
                 </p>
               )}
@@ -157,7 +156,7 @@ export default function PasswordGate({ children }: PasswordGateProps) {
               <button
                 type="submit"
                 disabled={!canUnlock || isSubmitting}
-                className="btn-gradient w-full rounded-2xl px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_40px_rgba(59,130,246,0.35)] transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 disabled:cursor-not-allowed disabled:opacity-45"
+                className="btn-gradient w-full rounded-xl px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/45 disabled:cursor-not-allowed disabled:opacity-45"
               >
                 {isSubmitting ? "Verifying..." : "Unlock demo"}
               </button>
