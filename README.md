@@ -2,8 +2,6 @@
 ## Live Demo
 https://ai-voice-studio-ebon.vercel.app/
 
-https://clipscribeai-ruby.vercel.app/
-
 Modern AI text-to-speech platform using ElevenLabs and Cloudflare Turnstile.
 
 Experimental demo SaaS MVP for real-time German speech generation: Bavarian and Hochdeutsch voices, in-browser playback, and MP3 download. Built as a secure, rate-limited AI voice testing playground with production-style deployment patterns.
