@@ -1,4 +1,8 @@
 # AI Voice Studio
+## Live Demo
+https://ai-voice-studio-ebon.vercel.app/
+
+https://clipscribeai-ruby.vercel.app/
 
 Modern AI text-to-speech platform using ElevenLabs and Cloudflare Turnstile.
 
