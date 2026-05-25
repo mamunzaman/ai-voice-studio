@@ -20,6 +20,39 @@ function isValidVoice(value: string): value is VoiceId {
   return VALID_VOICES.includes(value as VoiceId);
 }
 
+function formatElevenLabsError(raw: string, status: number): string {
+  if (!raw.trim()) {
+    return `Voice generation failed (provider status ${status}).`;
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as {
+      detail?: string | { message?: string };
+      message?: string;
+    };
+
+    if (typeof parsed.detail === "string") {
+      return parsed.detail;
+    }
+
+    if (
+      parsed.detail &&
+      typeof parsed.detail === "object" &&
+      parsed.detail.message
+    ) {
+      return String(parsed.detail.message);
+    }
+
+    if (parsed.message) {
+      return String(parsed.message);
+    }
+  } catch {
+    // Use raw text below
+  }
+
+  return raw.slice(0, 500);
+}
+
 export async function POST(request: Request) {
   try {
     // In-memory limiter: 10 generations per IP per hour (resets on cold start).
@@ -134,18 +167,6 @@ export async function POST(request: Request) {
 
     const cacheFilePath = path.join(cacheDir, `${cacheKey}.mp3`);
 
-    const apiKey = process.env.ELEVENLABS_API_KEY;
-
-    if (!apiKey) {
-      return Response.json(
-        {
-          error: "Voice service is not configured.",
-          code: "SERVER_MISCONFIGURED",
-        },
-        { status: 500 }
-      );
-    }
-
     if (existsSync(cacheFilePath)) {
       const cachedAudio = await readFile(cacheFilePath);
 
@@ -158,10 +179,24 @@ export async function POST(request: Request) {
       });
     }
 
+    const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
+
+    if (!apiKey) {
+      return Response.json(
+        {
+          error: "ELEVENLABS_API_KEY is not configured on the server.",
+          code: "SERVER_MISCONFIGURED",
+        },
+        { status: 500 }
+      );
+    }
+
     const voiceMap: Record<VoiceId, string> = {
-      male_bavarian: process.env.ELEVENLABS_VOICE_MALE_BAVARIAN_ID ?? "",
-      female_bavarian: process.env.ELEVENLABS_VOICE_FEMALE_BAVARIAN_ID ?? "",
-      male_hochdeutsch: process.env.ELEVENLABS_VOICE_MALE_HOCHDEUTSCH_ID ?? "",
+      male_bavarian: process.env.ELEVENLABS_VOICE_MALE_BAVARIAN_ID?.trim() ?? "",
+      female_bavarian:
+        process.env.ELEVENLABS_VOICE_FEMALE_BAVARIAN_ID?.trim() ?? "",
+      male_hochdeutsch:
+        process.env.ELEVENLABS_VOICE_MALE_HOCHDEUTSCH_ID?.trim() ?? "",
     };
 
     const voiceId = voiceMap[voice];
@@ -169,7 +204,7 @@ export async function POST(request: Request) {
     if (!voiceId) {
       return Response.json(
         {
-          error: `Voice "${voice}" is not configured on the server.`,
+          error: `ElevenLabs voice ID for "${voice}" is not configured on the server.`,
           code: "VOICE_NOT_CONFIGURED",
         },
         { status: 500 }
@@ -199,15 +234,15 @@ export async function POST(request: Request) {
     if (!response.ok) {
       const errorText = await response.text();
 
-      console.error("ElevenLabs API error:", {
+      console.error("[generate-voice] ElevenLabs API error:", {
         status: response.status,
+        voice,
         body: errorText,
       });
 
       return Response.json(
         {
-          error:
-            "Voice generation failed. The text-to-speech provider could not complete this request.",
+          error: formatElevenLabsError(errorText, response.status),
           code: "ELEVENLABS_ERROR",
         },
         { status: 502 }
@@ -226,7 +261,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    console.error("generate-voice error:", error);
+    console.error("[generate-voice] Unhandled error:", error);
 
     return Response.json(
       {
