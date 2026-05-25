@@ -20,6 +20,48 @@ function isValidVoice(value: string): value is VoiceId {
   return VALID_VOICES.includes(value as VoiceId);
 }
 
+function getCacheDir() {
+  if (process.env.VERCEL === "1") {
+    return path.join("/tmp", "ai-voice-studio-cache");
+  }
+
+  return path.join(process.cwd(), ".cache", "audio");
+}
+
+async function ensureCacheDir(cacheDir: string): Promise<boolean> {
+  try {
+    await mkdir(cacheDir, { recursive: true });
+    return true;
+  } catch (error) {
+    console.warn("[generate-voice] Cache disabled (mkdir failed):", error);
+    return false;
+  }
+}
+
+async function readCacheFile(cacheFilePath: string): Promise<Buffer | null> {
+  try {
+    if (!existsSync(cacheFilePath)) {
+      return null;
+    }
+
+    return await readFile(cacheFilePath);
+  } catch (error) {
+    console.warn("[generate-voice] Cache read skipped:", error);
+    return null;
+  }
+}
+
+async function writeCacheFile(
+  cacheFilePath: string,
+  audioBuffer: ArrayBuffer
+): Promise<void> {
+  try {
+    await writeFile(cacheFilePath, Buffer.from(audioBuffer));
+  } catch (error) {
+    console.warn("[generate-voice] Cache write failed:", error);
+  }
+}
+
 function formatElevenLabsError(raw: string, status: number): string {
   if (!raw.trim()) {
     return `Voice generation failed (provider status ${status}).`;
@@ -157,26 +199,27 @@ export async function POST(request: Request) {
       );
     }
 
-    const cacheDir = path.join(process.cwd(), ".cache", "audio");
-    await mkdir(cacheDir, { recursive: true });
-
     const cacheKey = crypto
       .createHash("sha256")
       .update(`${voice}:${text}`)
       .digest("hex");
 
+    const cacheDir = getCacheDir();
+    const cacheEnabled = await ensureCacheDir(cacheDir);
     const cacheFilePath = path.join(cacheDir, `${cacheKey}.mp3`);
 
-    if (existsSync(cacheFilePath)) {
-      const cachedAudio = await readFile(cacheFilePath);
+    if (cacheEnabled) {
+      const cachedAudio = await readCacheFile(cacheFilePath);
 
-      return new Response(cachedAudio, {
-        headers: {
-          "Content-Type": "audio/mpeg",
-          "Content-Disposition": "inline; filename=ai-voice-studio.mp3",
-          "X-Cache": "HIT",
-        },
-      });
+      if (cachedAudio) {
+        return new Response(new Uint8Array(cachedAudio), {
+          headers: {
+            "Content-Type": "audio/mpeg",
+            "Content-Disposition": "inline; filename=ai-voice-studio.mp3",
+            "X-Cache": "HIT",
+          },
+        });
+      }
     }
 
     const apiKey = process.env.ELEVENLABS_API_KEY?.trim();
@@ -251,7 +294,9 @@ export async function POST(request: Request) {
 
     const audioBuffer = await response.arrayBuffer();
 
-    await writeFile(cacheFilePath, Buffer.from(audioBuffer));
+    if (cacheEnabled) {
+      await writeCacheFile(cacheFilePath, audioBuffer);
+    }
 
     return new Response(audioBuffer, {
       headers: {
