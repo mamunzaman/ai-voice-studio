@@ -73,7 +73,7 @@ export default function PasswordGate({ children }: PasswordGateProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          password,
+          password: password.trim(),
           turnstileToken,
         }),
       });
