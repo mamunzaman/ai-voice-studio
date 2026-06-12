@@ -159,6 +159,41 @@ After deploy, in Cloudflare Turnstile → **Hostname management**, add:
 | `/api/generate-voice` | POST | Generate MP3 (password header required) |
 | `/api/usage` | GET | ElevenLabs credits (consider protecting) |
 
+## AI-Assisted Development
+
+This project was developed using modern AI-assisted software engineering workflows.
+
+### Tools Used
+
+* Cursor AI
+* ChatGPT
+* Claude
+* Google Stitch
+
+### Responsibilities
+
+* Product planning
+* Prompt engineering
+* Application architecture
+* UI/UX design
+* Testing and debugging
+* Deployment and production setup
+
+The project demonstrates rapid MVP development using AI-assisted engineering while maintaining production-quality code, security practices, and deployment workflows.
+
+---
+
+## Project Highlights
+
+* AI-powered SaaS MVP
+* Production deployment on Vercel
+* Secure API architecture
+* Cloudflare Turnstile integration
+* Rate-limited public demo
+* TypeScript-first codebase
+* AI-assisted development workflow
+
+
 ## Roadmap
 
 - [ ] Protect `/api/usage` for production
